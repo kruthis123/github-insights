@@ -51,6 +51,17 @@ jobs:
           jq -s '.[0] * .[1] * .[2]' /tmp/npm_day.json /tmp/npm_week.json /tmp/npm_month.json \
             > docs/data/npm_node-cluster-sqs-consumer.json
 
+      - name: Archive PyPI and npm snapshots by date
+        run: |
+          DATE=$(date -u +%Y%m%d)
+          mkdir -p docs/data/raw/$DATE
+          cp docs/data/pypi_github-context-tools.json   docs/data/raw/$DATE/pypi_github-context-tools.json
+          cp docs/data/pypi_git-unified-diff-parse.json  docs/data/raw/$DATE/pypi_git-unified-diff-parse.json
+          cp docs/data/npm_node-cluster-sqs-consumer.json docs/data/raw/$DATE/npm_node-cluster-sqs-consumer.json
+          # Update index.json with all dated folders sorted ascending
+          DATES=$(ls docs/data/raw/ | grep -E '^[0-9]{8}$' | sort | jq -R . | jq -sc .)
+          echo "{\"dates\": $DATES}" > docs/data/raw/index.json
+
       - name: Commit and push insights data
         run: |
           git config user.name "github-actions[bot]"

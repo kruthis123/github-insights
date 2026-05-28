@@ -474,7 +474,24 @@
         container.appendChild(card);
       }
 
-      function renderPypiStats(pypi, container) {
+      async function loadSnapshots(filePrefix) {
+        const index = await fetchJSON("data/raw/index.json");
+        if (!index || !index.dates) return [];
+        const snapshots = await Promise.all(
+          index.dates.map(async date => {
+            const data = await fetchJSON(`data/raw/${date}/${filePrefix}`);
+            return data ? { date, data } : null;
+          })
+        );
+        return snapshots.filter(Boolean);
+      }
+
+      function formatDateShort(dateStr) {
+        const y = dateStr.slice(0, 4), m = dateStr.slice(4, 6), d = dateStr.slice(6, 8);
+        return new Date(`${y}-${m}-${d}`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      }
+
+      function renderPypiStats(pypi, snapshots, pkg, container) {
         if (!pypi) return;
         const d = pypi.downloads;
         const block = document.createElement("div");
@@ -489,9 +506,21 @@
         `;
         block.appendChild(row);
         container.appendChild(block);
+
+        if (snapshots.length > 1) {
+          const id = `pypi-trend-${pkg}`;
+          const card = document.createElement("div");
+          card.className = "chart-card";
+          card.innerHTML = `<h4>Monthly downloads over time</h4><canvas id="${id}"></canvas>`;
+          container.appendChild(card);
+          lineChart(id,
+            snapshots.map(s => formatDateShort(s.date)),
+            [{ label: "Last Month", data: snapshots.map(s => s.data.downloads.last_month), borderColor: "#79b8ff", backgroundColor: "rgba(121,184,255,0.07)", fill: true, tension: 0.4, pointRadius: 3 }]
+          );
+        }
       }
 
-      function renderNpmStats(npm, container) {
+      function renderNpmStats(npm, snapshots, pkg, container) {
         if (!npm) return;
         const block = document.createElement("div");
         block.className = "stats-block";
@@ -505,32 +534,46 @@
         `;
         block.appendChild(row);
         container.appendChild(block);
+
+        if (snapshots.length > 1) {
+          const id = `npm-trend-${pkg}`;
+          const card = document.createElement("div");
+          card.className = "chart-card";
+          card.innerHTML = `<h4>Monthly downloads over time</h4><canvas id="${id}"></canvas>`;
+          container.appendChild(card);
+          lineChart(id,
+            snapshots.map(s => formatDateShort(s.date)),
+            [{ label: "Last Month", data: snapshots.map(s => s.data.last_month), borderColor: "#ff7b72", backgroundColor: "rgba(255,123,114,0.07)", fill: true, tension: 0.4, pointRadius: 3 }]
+          );
+        }
       }
 
       async function loadPypiRepo({ repo, pkg }) {
         const key = fileKey(repo);
-        const [views, clones, referrals, pypi] = await Promise.all([
+        const [views, clones, referrals, pypi, pypiSnapshots] = await Promise.all([
           fetchJSON(`data/${key}_views.json`),
           fetchJSON(`data/${key}_clones.json`),
           fetchJSON(`data/${key}_referrals.json`),
           fetchJSON(`data/pypi_${pkg}.json`),
+          loadSnapshots(`pypi_${pkg}.json`),
         ]);
         const { score } = ghStatRow(views, clones);
         const pypiScore = pypi ? pypi.downloads.last_month : 0;
-        return { repo, pkg, key, views, clones, referrals, pypi, score: score + pypiScore };
+        return { repo, pkg, key, views, clones, referrals, pypi, pypiSnapshots, score: score + pypiScore };
       }
 
       async function loadNpmRepo({ repo, pkg }) {
         const key = fileKey(repo);
-        const [views, clones, referrals, npm] = await Promise.all([
+        const [views, clones, referrals, npm, npmSnapshots] = await Promise.all([
           fetchJSON(`data/${key}_views.json`),
           fetchJSON(`data/${key}_clones.json`),
           fetchJSON(`data/${key}_referrals.json`),
           fetchJSON(`data/npm_${pkg}.json`),
+          loadSnapshots(`npm_${pkg}.json`),
         ]);
         const { score } = ghStatRow(views, clones);
         const npmScore = npm ? npm.last_month : 0;
-        return { repo, pkg, key, views, clones, referrals, npm, score: score + npmScore };
+        return { repo, pkg, key, views, clones, referrals, npm, npmSnapshots, score: score + npmScore };
       }
 
       function renderRepoSection(data, pkgType, isLast) {
@@ -552,8 +595,8 @@
           </div>
         `;
 
-        if (pkgType === "pypi") renderPypiStats(data.pypi, section);
-        if (pkgType === "npm")  renderNpmStats(data.npm, section);
+        if (pkgType === "pypi") renderPypiStats(data.pypi, data.pypiSnapshots, data.pkg, section);
+        if (pkgType === "npm")  renderNpmStats(data.npm, data.npmSnapshots, data.pkg, section);
 
         renderGhStats(data.views, data.clones, data.key, section);
 
