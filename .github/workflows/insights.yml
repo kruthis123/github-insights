@@ -27,10 +27,7 @@ jobs:
       - name: Collect Insights
         uses: emillg/github-repo-insights@v1.2.1
         with:
-          repos: >-
-            kruthis123/github-context-tools,
-            kruthis123/node-cluster-sqs-consumer,
-            kruthis123/git-unified-diff-parse
+          repos: "kruthis123/github-context-tools,kruthis123/node-cluster-sqs-consumer,kruthis123/git-unified-diff-parse"
           pat-token: ${{ secrets.PAT_TOKEN }}
 
       - name: Commit and push insights data

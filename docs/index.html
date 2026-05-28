@@ -1,23 +1,447 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>GitHub Repository Insights</title>
+    <title>Kruthi Shiva Kumar's Repository Insights</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css"
-    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --surface2: #1c2128;
+        --border: #30363d;
+        --text: #e6edf3;
+        --text-muted: #7d8590;
+        --accent: #58a6ff;
+        --accent2: #3fb950;
+        --purple: #bc8cff;
+        --orange: #ffa657;
+        --red: #f85149;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 40px 40px 32px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .header-left h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header-left p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 6px;
+      }
+
+      .header-right {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-align: right;
+      }
+
+      .github-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        transition: border-color 0.2s;
+      }
+
+      .github-link:hover { border-color: var(--accent); }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 40px 64px;
+      }
+
+      .repo-section {
+        margin-bottom: 56px;
+      }
+
+      .repo-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .repo-header h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .repo-header h2::before {
+        content: "";
+        display: inline-block;
+        width: 3px;
+        height: 18px;
+        background: linear-gradient(to bottom, var(--accent), var(--purple));
+        border-radius: 2px;
+      }
+
+      .repo-header a {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.8rem;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+      }
+
+      .repo-header a:hover { opacity: 1; }
+
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.2s;
+      }
+
+      .stat:hover { border-color: #58a6ff55; }
+
+      .stat::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+      }
+
+      .stat:nth-child(1)::after { background: linear-gradient(to right, var(--accent), #1f6feb); }
+      .stat:nth-child(2)::after { background: linear-gradient(to right, var(--accent2), #238636); }
+      .stat:nth-child(3)::after { background: linear-gradient(to right, var(--purple), #8250df); }
+      .stat:nth-child(4)::after { background: linear-gradient(to right, var(--orange), #d4a72c); }
+
+      .stat .value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+        letter-spacing: -1px;
+      }
+
+      .stat .label {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .chart-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .chart-card h3 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 16px;
+      }
+
+      .referrals {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .referrals h3 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 14px;
+      }
+
+      .referral-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.85rem;
+      }
+
+      .referral-row:last-child { border-bottom: none; }
+
+      .referral-name { color: var(--text); }
+
+      .referral-meta { display: flex; gap: 8px; align-items: center; }
+
+      .badge {
+        background: rgba(88, 166, 255, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(88, 166, 255, 0.2);
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      .badge-unique {
+        background: rgba(63, 185, 80, 0.1);
+        color: var(--accent2);
+        border: 1px solid rgba(63, 185, 80, 0.2);
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      .no-data {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-style: italic;
+        padding: 12px 0;
+      }
+
+      .loading {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 60px 0;
+        text-align: center;
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 48px 0;
+      }
+
+      @media (max-width: 768px) {
+        header { padding: 24px 20px; }
+        main { padding: 24px 20px 48px; }
+        .stat-row { grid-template-columns: repeat(2, 1fr); }
+        .charts { grid-template-columns: 1fr; }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <header>
+      <div class="header-inner">
+        <div class="header-left">
+          <h1>Kruthi Shiva Kumar</h1>
+          <p>Repository traffic insights &mdash; collected weekly beyond GitHub's 14-day limit</p>
+        </div>
+        <a class="github-link" href="https://github.com/kruthis123" target="_blank">
+          &#128279; github.com/kruthis123
+        </a>
+      </div>
+    </header>
+    <main id="main"><p class="loading">Loading insights&hellip;</p></main>
+
     <script>
-      window.$docsify = {
-        name: "GitHub Insights",
-        loadSidebar: false,
-        subMaxLevel: 2,
+      const repos = [
+        "kruthis123/github-context-tools",
+        "kruthis123/node-cluster-sqs-consumer",
+        "kruthis123/git-unified-diff-parse",
+      ];
+
+      const CHART_DEFAULTS = {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { boxWidth: 10, font: { size: 11 }, color: "#7d8590", padding: 16 },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { font: { size: 10 }, color: "#7d8590", maxRotation: 45 },
+            grid: { color: "#21262d" },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { font: { size: 10 }, color: "#7d8590" },
+            grid: { color: "#21262d" },
+          },
+        },
       };
+
+      function fileKey(repo) { return repo.replace("/", "_"); }
+
+      function formatDate(ts) {
+        return new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      }
+
+      async function fetchJSON(path) {
+        try {
+          const res = await fetch(path);
+          if (!res.ok) return null;
+          return res.json();
+        } catch { return null; }
+      }
+
+      function sum(arr, key) {
+        return arr.reduce((a, b) => a + (b[key] || 0), 0);
+      }
+
+      function makeLineChart(ctx, labels, datasets) {
+        new Chart(ctx, {
+          type: "line",
+          data: { labels, datasets },
+          options: CHART_DEFAULTS,
+        });
+      }
+
+      async function renderRepo(repo, isLast) {
+        const key = fileKey(repo);
+        const [views, clones, referrals] = await Promise.all([
+          fetchJSON(`data/${key}_views.json`),
+          fetchJSON(`data/${key}_clones.json`),
+          fetchJSON(`data/${key}_referrals.json`),
+        ]);
+
+        const section = document.createElement("div");
+        section.className = "repo-section";
+
+        const name = repo.split("/")[1];
+        section.innerHTML = `
+          <div class="repo-header">
+            <h2>${name}</h2>
+            <a href="https://github.com/${repo}" target="_blank">View on GitHub &rarr;</a>
+          </div>
+        `;
+
+        const totalViews   = views  ? sum(views.views,    "count")   : 0;
+        const uniqueViews  = views  ? sum(views.views,    "uniques") : 0;
+        const totalClones  = clones ? sum(clones.clones,  "count")   : 0;
+        const uniqueClones = clones ? sum(clones.clones,  "uniques") : 0;
+
+        const statRow = document.createElement("div");
+        statRow.className = "stat-row";
+        statRow.innerHTML = `
+          <div class="stat"><div class="value">${totalViews}</div><div class="label">Total Views</div></div>
+          <div class="stat"><div class="value">${uniqueViews}</div><div class="label">Unique Visitors</div></div>
+          <div class="stat"><div class="value">${totalClones}</div><div class="label">Total Clones</div></div>
+          <div class="stat"><div class="value">${uniqueClones}</div><div class="label">Unique Cloners</div></div>
+        `;
+        section.appendChild(statRow);
+
+        const charts = document.createElement("div");
+        charts.className = "charts";
+
+        if (views) {
+          const labels = views.views.map(v => formatDate(v.timestamp));
+          const card = document.createElement("div");
+          card.className = "chart-card";
+          card.innerHTML = `<h3>Views over time</h3><canvas id="views-${key}"></canvas>`;
+          charts.appendChild(card);
+          section.appendChild(charts);
+          requestAnimationFrame(() => {
+            makeLineChart(document.getElementById(`views-${key}`), labels, [
+              { label: "Views",  data: views.views.map(v => v.count),   borderColor: "#58a6ff", backgroundColor: "rgba(88,166,255,0.08)",  fill: true, tension: 0.4, pointRadius: 3 },
+              { label: "Unique", data: views.views.map(v => v.uniques), borderColor: "#3fb950", backgroundColor: "rgba(63,185,80,0.08)",   fill: true, tension: 0.4, pointRadius: 3 },
+            ]);
+          });
+        }
+
+        if (clones) {
+          const labels = clones.clones.map(v => formatDate(v.timestamp));
+          const card = document.createElement("div");
+          card.className = "chart-card";
+          card.innerHTML = `<h3>Clones over time</h3><canvas id="clones-${key}"></canvas>`;
+          charts.appendChild(card);
+          requestAnimationFrame(() => {
+            makeLineChart(document.getElementById(`clones-${key}`), labels, [
+              { label: "Clones", data: clones.clones.map(v => v.count),   borderColor: "#bc8cff", backgroundColor: "rgba(188,140,255,0.08)", fill: true, tension: 0.4, pointRadius: 3 },
+              { label: "Unique", data: clones.clones.map(v => v.uniques), borderColor: "#ffa657", backgroundColor: "rgba(255,166,87,0.08)",  fill: true, tension: 0.4, pointRadius: 3 },
+            ]);
+          });
+        }
+
+        if (referrals && referrals.length) {
+          const ref = document.createElement("div");
+          ref.className = "referrals";
+          ref.innerHTML = `<h3>Traffic sources</h3>` + referrals.map(r =>
+            `<div class="referral-row">
+              <span class="referral-name">${r.referrer}</span>
+              <span class="referral-meta">
+                <span class="badge">${r.count} views</span>
+                <span class="badge-unique">${r.uniques} unique</span>
+              </span>
+            </div>`
+          ).join("");
+          section.appendChild(ref);
+        }
+
+        if (!isLast) {
+          section.appendChild(document.createElement("hr")).className = "divider";
+        }
+
+        return section;
+      }
+
+      async function init() {
+        const main = document.getElementById("main");
+        main.innerHTML = "";
+        for (let i = 0; i < repos.length; i++) {
+          const section = await renderRepo(repos[i], i === repos.length - 1);
+          main.appendChild(section);
+        }
+      }
+
+      init();
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   </body>
 </html>
