@@ -9,7 +9,6 @@
       :root {
         --bg: #0d1117;
         --surface: #161b22;
-        --surface2: #1c2128;
         --border: #30363d;
         --text: #e6edf3;
         --text-muted: #7d8590;
@@ -17,7 +16,8 @@
         --accent2: #3fb950;
         --purple: #bc8cff;
         --orange: #ffa657;
-        --red: #f85149;
+        --pypi-color: #3572a5;
+        --npm-color: #cb3837;
       }
 
       * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,12 +61,6 @@
         margin-top: 6px;
       }
 
-      .header-right {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        text-align: right;
-      }
-
       .github-link {
         color: var(--accent);
         text-decoration: none;
@@ -85,22 +79,60 @@
       main {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 32px 40px 64px;
+        padding: 40px 40px 64px;
       }
 
-      .repo-section {
-        margin-bottom: 56px;
+      /* Section heading (Python / Node.js) */
+      .ecosystem-section { margin-bottom: 64px; }
+
+      .ecosystem-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 32px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
       }
+
+      .ecosystem-heading h2 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .eco-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 3px 10px;
+        border-radius: 20px;
+      }
+
+      .eco-badge.pypi {
+        background: rgba(53, 114, 165, 0.15);
+        color: #79b8ff;
+        border: 1px solid rgba(53, 114, 165, 0.4);
+      }
+
+      .eco-badge.npm {
+        background: rgba(203, 56, 55, 0.12);
+        color: #ff7b72;
+        border: 1px solid rgba(203, 56, 55, 0.35);
+      }
+
+      /* Individual repo card */
+      .repo-section { margin-bottom: 48px; }
 
       .repo-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
 
-      .repo-header h2 {
-        font-size: 1rem;
+      .repo-header h3 {
+        font-size: 0.95rem;
         font-weight: 600;
         color: var(--text);
         display: flex;
@@ -108,43 +140,68 @@
         gap: 8px;
       }
 
-      .repo-header h2::before {
+      .repo-header h3::before {
         content: "";
         display: inline-block;
         width: 3px;
-        height: 18px;
+        height: 16px;
         background: linear-gradient(to bottom, var(--accent), var(--purple));
         border-radius: 2px;
+        flex-shrink: 0;
       }
 
-      .repo-header a {
+      .repo-links { display: flex; gap: 8px; }
+
+      .repo-links a {
         color: var(--accent);
         text-decoration: none;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         opacity: 0.8;
-        transition: opacity 0.2s;
+        padding: 4px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        transition: all 0.2s;
       }
 
-      .repo-header a:hover { opacity: 1; }
+      .repo-links a:hover { opacity: 1; border-color: var(--accent); }
+
+      .repo-links a.pypi-link { color: #79b8ff; }
+      .repo-links a.pypi-link:hover { border-color: #79b8ff; }
+      .repo-links a.npm-link  { color: #ff7b72; }
+      .repo-links a.npm-link:hover  { border-color: #ff7b72; }
+
+      /* Stats grid */
+      .stats-block { margin-bottom: 14px; }
+
+      .stats-block-label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
 
       .stat-row {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-        margin-bottom: 16px;
+        gap: 10px;
+        margin-bottom: 10px;
       }
+
+      .stat-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+      .stat-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
 
       .stat {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 18px 20px;
+        border-radius: 10px;
+        padding: 14px 16px;
         position: relative;
         overflow: hidden;
         transition: border-color 0.2s;
       }
 
-      .stat:hover { border-color: #58a6ff55; }
+      .stat:hover { border-color: rgba(88,166,255,0.35); }
 
       .stat::after {
         content: "";
@@ -153,106 +210,124 @@
         height: 2px;
       }
 
-      .stat:nth-child(1)::after { background: linear-gradient(to right, var(--accent), #1f6feb); }
-      .stat:nth-child(2)::after { background: linear-gradient(to right, var(--accent2), #238636); }
-      .stat:nth-child(3)::after { background: linear-gradient(to right, var(--purple), #8250df); }
-      .stat:nth-child(4)::after { background: linear-gradient(to right, var(--orange), #d4a72c); }
+      .stat-row.gh .stat:nth-child(1)::after { background: linear-gradient(to right, var(--accent), #1f6feb); }
+      .stat-row.gh .stat:nth-child(2)::after { background: linear-gradient(to right, var(--accent2), #238636); }
+      .stat-row.gh .stat:nth-child(3)::after { background: linear-gradient(to right, var(--purple), #8250df); }
+      .stat-row.gh .stat:nth-child(4)::after { background: linear-gradient(to right, var(--orange), #d4a72c); }
+
+      .stat-row.pkg .stat:nth-child(1)::after { background: linear-gradient(to right, #79b8ff, #58a6ff); }
+      .stat-row.pkg .stat:nth-child(2)::after { background: linear-gradient(to right, var(--accent2), #238636); }
+      .stat-row.pkg .stat:nth-child(3)::after { background: linear-gradient(to right, var(--orange), #d4a72c); }
+
+      .stat-row.npm-pkg .stat:nth-child(1)::after { background: linear-gradient(to right, #ff7b72, #cb3837); }
+      .stat-row.npm-pkg .stat:nth-child(2)::after { background: linear-gradient(to right, var(--orange), #d4a72c); }
+      .stat-row.npm-pkg .stat:nth-child(3)::after { background: linear-gradient(to right, var(--purple), #8250df); }
 
       .stat .value {
-        font-size: 2rem;
+        font-size: 1.7rem;
         font-weight: 700;
         line-height: 1;
         color: var(--text);
-        letter-spacing: -1px;
+        letter-spacing: -0.5px;
       }
 
       .stat .label {
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         color: var(--text-muted);
-        margin-top: 6px;
+        margin-top: 5px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
 
+      /* Charts */
       .charts {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
+        gap: 10px;
+        margin-bottom: 10px;
       }
 
       .chart-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 20px;
+        border-radius: 10px;
+        padding: 16px;
       }
 
-      .chart-card h3 {
-        font-size: 0.75rem;
+      .chart-card h4 {
+        font-size: 0.68rem;
         font-weight: 600;
         color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
       }
 
-      .referrals {
+      /* Referrals / breakdown tables */
+      .table-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 20px;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 10px;
       }
 
-      .referrals h3 {
-        font-size: 0.75rem;
+      .table-card h4 {
+        font-size: 0.68rem;
         font-weight: 600;
         color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
 
-      .referral-row {
+      .table-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 0;
+        padding: 7px 0;
         border-bottom: 1px solid var(--border);
-        font-size: 0.85rem;
+        font-size: 0.82rem;
       }
 
-      .referral-row:last-child { border-bottom: none; }
+      .table-row:last-child { border-bottom: none; }
 
-      .referral-name { color: var(--text); }
-
-      .referral-meta { display: flex; gap: 8px; align-items: center; }
+      .table-row-meta { display: flex; gap: 6px; align-items: center; }
 
       .badge {
         background: rgba(88, 166, 255, 0.1);
         color: var(--accent);
         border: 1px solid rgba(88, 166, 255, 0.2);
         border-radius: 20px;
-        padding: 2px 10px;
-        font-size: 0.72rem;
+        padding: 2px 8px;
+        font-size: 0.68rem;
         font-weight: 600;
       }
 
-      .badge-unique {
+      .badge-green {
         background: rgba(63, 185, 80, 0.1);
         color: var(--accent2);
         border: 1px solid rgba(63, 185, 80, 0.2);
         border-radius: 20px;
-        padding: 2px 10px;
-        font-size: 0.72rem;
+        padding: 2px 8px;
+        font-size: 0.68rem;
         font-weight: 600;
       }
 
-      .no-data {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        font-style: italic;
-        padding: 12px 0;
+      .pct-bar-wrap {
+        width: 60px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+
+      .pct-bar { height: 100%; border-radius: 2px; background: var(--accent); }
+
+      .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 40px 0;
       }
 
       .loading {
@@ -262,16 +337,11 @@
         text-align: center;
       }
 
-      .divider {
-        border: none;
-        border-top: 1px solid var(--border);
-        margin: 48px 0;
-      }
-
       @media (max-width: 768px) {
         header { padding: 24px 20px; }
         main { padding: 24px 20px 48px; }
-        .stat-row { grid-template-columns: repeat(2, 1fr); }
+        .stat-row.cols-4 { grid-template-columns: repeat(2, 1fr); }
+        .stat-row.cols-3 { grid-template-columns: repeat(2, 1fr); }
         .charts { grid-template-columns: 1fr; }
       }
     </style>
@@ -281,7 +351,7 @@
       <div class="header-inner">
         <div class="header-left">
           <h1>Kruthi Shiva Kumar</h1>
-          <p>Repository traffic insights &mdash; collected weekly beyond GitHub's 14-day limit</p>
+          <p>Repository &amp; package insights &mdash; collected weekly beyond GitHub's 14-day limit</p>
         </div>
         <a class="github-link" href="https://github.com/kruthis123" target="_blank">
           &#128279; github.com/kruthis123
@@ -291,38 +361,29 @@
     <main id="main"><p class="loading">Loading insights&hellip;</p></main>
 
     <script>
-      const repos = [
-        "kruthis123/github-context-tools",
-        "kruthis123/node-cluster-sqs-consumer",
-        "kruthis123/git-unified-diff-parse",
+      const PYPI_REPOS = [
+        { repo: "kruthis123/github-context-tools",  pkg: "github-context-tools" },
+        { repo: "kruthis123/git-unified-diff-parse", pkg: "git-unified-diff-parse" },
       ];
 
-      const CHART_DEFAULTS = {
+      const NPM_REPOS = [
+        { repo: "kruthis123/node-cluster-sqs-consumer", pkg: "node-cluster-sqs-consumer" },
+      ];
+
+      const CHART_OPTS = {
         responsive: true,
         plugins: {
-          legend: {
-            position: "bottom",
-            labels: { boxWidth: 10, font: { size: 11 }, color: "#7d8590", padding: 16 },
-          },
+          legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 10 }, color: "#7d8590", padding: 12 } },
         },
         scales: {
-          x: {
-            ticks: { font: { size: 10 }, color: "#7d8590", maxRotation: 45 },
-            grid: { color: "#21262d" },
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { font: { size: 10 }, color: "#7d8590" },
-            grid: { color: "#21262d" },
-          },
+          x: { ticks: { font: { size: 9 }, color: "#7d8590", maxRotation: 45 }, grid: { color: "#21262d" } },
+          y: { beginAtZero: true, ticks: { font: { size: 9 }, color: "#7d8590" }, grid: { color: "#21262d" } },
         },
       };
 
       function fileKey(repo) { return repo.replace("/", "_"); }
-
-      function formatDate(ts) {
-        return new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-      }
+      function formatDate(ts) { return new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
+      function fmt(n) { return n >= 1000 ? (n / 1000).toFixed(1) + "k" : String(n); }
 
       async function fetchJSON(path) {
         try {
@@ -332,51 +393,40 @@
         } catch { return null; }
       }
 
-      function sum(arr, key) {
-        return arr.reduce((a, b) => a + (b[key] || 0), 0);
-      }
+      function sum(arr, key) { return arr.reduce((a, b) => a + (b[key] || 0), 0); }
 
-      function makeLineChart(ctx, labels, datasets) {
-        new Chart(ctx, {
-          type: "line",
-          data: { labels, datasets },
-          options: CHART_DEFAULTS,
+      function lineChart(id, labels, datasets) {
+        requestAnimationFrame(() => {
+          const el = document.getElementById(id);
+          if (el) new Chart(el, { type: "line", data: { labels, datasets }, options: CHART_OPTS });
         });
       }
 
-      async function renderRepo(repo, isLast) {
-        const key = fileKey(repo);
-        const [views, clones, referrals] = await Promise.all([
-          fetchJSON(`data/${key}_views.json`),
-          fetchJSON(`data/${key}_clones.json`),
-          fetchJSON(`data/${key}_referrals.json`),
-        ]);
+      function ghStatRow(views, clones) {
+        const tv = views  ? sum(views.views,   "count")   : 0;
+        const uv = views  ? sum(views.views,   "uniques") : 0;
+        const tc = clones ? sum(clones.clones, "count")   : 0;
+        const uc = clones ? sum(clones.clones, "uniques") : 0;
+        return { tv, uv, tc, uc, score: tv + tc };
+      }
 
-        const section = document.createElement("div");
-        section.className = "repo-section";
+      function renderGhStats(views, clones, key, container) {
+        const { tv, uv, tc, uc } = ghStatRow(views, clones);
 
-        const name = repo.split("/")[1];
-        section.innerHTML = `
-          <div class="repo-header">
-            <h2>${name}</h2>
-            <a href="https://github.com/${repo}" target="_blank">View on GitHub &rarr;</a>
-          </div>
+        const block = document.createElement("div");
+        block.className = "stats-block";
+        block.innerHTML = `<div class="stats-block-label">GitHub Traffic</div>`;
+
+        const row = document.createElement("div");
+        row.className = "stat-row cols-4 gh";
+        row.innerHTML = `
+          <div class="stat"><div class="value">${fmt(tv)}</div><div class="label">Total Views</div></div>
+          <div class="stat"><div class="value">${fmt(uv)}</div><div class="label">Unique Visitors</div></div>
+          <div class="stat"><div class="value">${fmt(tc)}</div><div class="label">Total Clones</div></div>
+          <div class="stat"><div class="value">${fmt(uc)}</div><div class="label">Unique Cloners</div></div>
         `;
-
-        const totalViews   = views  ? sum(views.views,    "count")   : 0;
-        const uniqueViews  = views  ? sum(views.views,    "uniques") : 0;
-        const totalClones  = clones ? sum(clones.clones,  "count")   : 0;
-        const uniqueClones = clones ? sum(clones.clones,  "uniques") : 0;
-
-        const statRow = document.createElement("div");
-        statRow.className = "stat-row";
-        statRow.innerHTML = `
-          <div class="stat"><div class="value">${totalViews}</div><div class="label">Total Views</div></div>
-          <div class="stat"><div class="value">${uniqueViews}</div><div class="label">Unique Visitors</div></div>
-          <div class="stat"><div class="value">${totalClones}</div><div class="label">Total Clones</div></div>
-          <div class="stat"><div class="value">${uniqueClones}</div><div class="label">Unique Cloners</div></div>
-        `;
-        section.appendChild(statRow);
+        block.appendChild(row);
+        container.appendChild(block);
 
         const charts = document.createElement("div");
         charts.className = "charts";
@@ -385,60 +435,167 @@
           const labels = views.views.map(v => formatDate(v.timestamp));
           const card = document.createElement("div");
           card.className = "chart-card";
-          card.innerHTML = `<h3>Views over time</h3><canvas id="views-${key}"></canvas>`;
+          card.innerHTML = `<h4>Views over time</h4><canvas id="views-${key}"></canvas>`;
           charts.appendChild(card);
-          section.appendChild(charts);
-          requestAnimationFrame(() => {
-            makeLineChart(document.getElementById(`views-${key}`), labels, [
-              { label: "Views",  data: views.views.map(v => v.count),   borderColor: "#58a6ff", backgroundColor: "rgba(88,166,255,0.08)",  fill: true, tension: 0.4, pointRadius: 3 },
-              { label: "Unique", data: views.views.map(v => v.uniques), borderColor: "#3fb950", backgroundColor: "rgba(63,185,80,0.08)",   fill: true, tension: 0.4, pointRadius: 3 },
-            ]);
-          });
+          lineChart(`views-${key}`, labels, [
+            { label: "Views",  data: views.views.map(v => v.count),   borderColor: "#58a6ff", backgroundColor: "rgba(88,166,255,0.07)",  fill: true, tension: 0.4, pointRadius: 3 },
+            { label: "Unique", data: views.views.map(v => v.uniques), borderColor: "#3fb950", backgroundColor: "rgba(63,185,80,0.07)",   fill: true, tension: 0.4, pointRadius: 3 },
+          ]);
         }
 
         if (clones) {
           const labels = clones.clones.map(v => formatDate(v.timestamp));
           const card = document.createElement("div");
           card.className = "chart-card";
-          card.innerHTML = `<h3>Clones over time</h3><canvas id="clones-${key}"></canvas>`;
+          card.innerHTML = `<h4>Clones over time</h4><canvas id="clones-${key}"></canvas>`;
           charts.appendChild(card);
-          requestAnimationFrame(() => {
-            makeLineChart(document.getElementById(`clones-${key}`), labels, [
-              { label: "Clones", data: clones.clones.map(v => v.count),   borderColor: "#bc8cff", backgroundColor: "rgba(188,140,255,0.08)", fill: true, tension: 0.4, pointRadius: 3 },
-              { label: "Unique", data: clones.clones.map(v => v.uniques), borderColor: "#ffa657", backgroundColor: "rgba(255,166,87,0.08)",  fill: true, tension: 0.4, pointRadius: 3 },
-            ]);
-          });
+          lineChart(`clones-${key}`, labels, [
+            { label: "Clones", data: clones.clones.map(v => v.count),   borderColor: "#bc8cff", backgroundColor: "rgba(188,140,255,0.07)", fill: true, tension: 0.4, pointRadius: 3 },
+            { label: "Unique", data: clones.clones.map(v => v.uniques), borderColor: "#ffa657", backgroundColor: "rgba(255,166,87,0.07)",  fill: true, tension: 0.4, pointRadius: 3 },
+          ]);
         }
 
-        if (referrals && referrals.length) {
-          const ref = document.createElement("div");
-          ref.className = "referrals";
-          ref.innerHTML = `<h3>Traffic sources</h3>` + referrals.map(r =>
-            `<div class="referral-row">
-              <span class="referral-name">${r.referrer}</span>
-              <span class="referral-meta">
-                <span class="badge">${r.count} views</span>
-                <span class="badge-unique">${r.uniques} unique</span>
-              </span>
-            </div>`
-          ).join("");
-          section.appendChild(ref);
-        }
+        container.appendChild(charts);
+      }
+
+      function renderReferrals(referrals, container) {
+        if (!referrals || !referrals.length) return;
+        const card = document.createElement("div");
+        card.className = "table-card";
+        card.innerHTML = `<h4>Traffic sources</h4>` + referrals.map(r =>
+          `<div class="table-row">
+            <span>${r.referrer}</span>
+            <span class="table-row-meta">
+              <span class="badge">${r.count} views</span>
+              <span class="badge-green">${r.uniques} unique</span>
+            </span>
+          </div>`
+        ).join("");
+        container.appendChild(card);
+      }
+
+      function renderPypiStats(pypi, container) {
+        if (!pypi) return;
+        const d = pypi.downloads;
+        const block = document.createElement("div");
+        block.className = "stats-block";
+        block.innerHTML = `<div class="stats-block-label">PyPI Downloads</div>`;
+        const row = document.createElement("div");
+        row.className = "stat-row cols-3 pkg";
+        row.innerHTML = `
+          <div class="stat"><div class="value">${fmt(d.last_month)}</div><div class="label">Last Month</div></div>
+          <div class="stat"><div class="value">${fmt(d.last_week)}</div><div class="label">Last Week</div></div>
+          <div class="stat"><div class="value">${fmt(d.last_180d)}</div><div class="label">Last 180 Days</div></div>
+        `;
+        block.appendChild(row);
+        container.appendChild(block);
+      }
+
+      function renderNpmStats(npm, container) {
+        if (!npm) return;
+        const block = document.createElement("div");
+        block.className = "stats-block";
+        block.innerHTML = `<div class="stats-block-label">npm Downloads</div>`;
+        const row = document.createElement("div");
+        row.className = "stat-row cols-3 npm-pkg";
+        row.innerHTML = `
+          <div class="stat"><div class="value">${fmt(npm.last_month)}</div><div class="label">Last Month</div></div>
+          <div class="stat"><div class="value">${fmt(npm.last_week)}</div><div class="label">Last Week</div></div>
+          <div class="stat"><div class="value">${fmt(npm.last_day)}</div><div class="label">Last Day</div></div>
+        `;
+        block.appendChild(row);
+        container.appendChild(block);
+      }
+
+      async function loadPypiRepo({ repo, pkg }) {
+        const key = fileKey(repo);
+        const [views, clones, referrals, pypi] = await Promise.all([
+          fetchJSON(`data/${key}_views.json`),
+          fetchJSON(`data/${key}_clones.json`),
+          fetchJSON(`data/${key}_referrals.json`),
+          fetchJSON(`data/pypi_${pkg}.json`),
+        ]);
+        const { score } = ghStatRow(views, clones);
+        const pypiScore = pypi ? pypi.downloads.last_month : 0;
+        return { repo, pkg, key, views, clones, referrals, pypi, score: score + pypiScore };
+      }
+
+      async function loadNpmRepo({ repo, pkg }) {
+        const key = fileKey(repo);
+        const [views, clones, referrals, npm] = await Promise.all([
+          fetchJSON(`data/${key}_views.json`),
+          fetchJSON(`data/${key}_clones.json`),
+          fetchJSON(`data/${key}_referrals.json`),
+          fetchJSON(`data/npm_${pkg}.json`),
+        ]);
+        const { score } = ghStatRow(views, clones);
+        const npmScore = npm ? npm.last_month : 0;
+        return { repo, pkg, key, views, clones, referrals, npm, score: score + npmScore };
+      }
+
+      function renderRepoSection(data, pkgType, isLast) {
+        const name = data.repo.split("/")[1];
+        const section = document.createElement("div");
+        section.className = "repo-section";
+
+        const pypiUrl = pkgType === "pypi" ? `https://pypi.org/project/${data.pkg}/` : null;
+        const npmUrl  = pkgType === "npm"  ? `https://www.npmjs.com/package/${data.pkg}` : null;
+
+        section.innerHTML = `
+          <div class="repo-header">
+            <h3>${name}</h3>
+            <div class="repo-links">
+              <a href="https://github.com/${data.repo}" target="_blank">GitHub &rarr;</a>
+              ${pypiUrl ? `<a class="pypi-link" href="${pypiUrl}" target="_blank">PyPI &rarr;</a>` : ""}
+              ${npmUrl  ? `<a class="npm-link"  href="${npmUrl}"  target="_blank">npm &rarr;</a>`  : ""}
+            </div>
+          </div>
+        `;
+
+        if (pkgType === "pypi") renderPypiStats(data.pypi, section);
+        if (pkgType === "npm")  renderNpmStats(data.npm, section);
+
+        renderGhStats(data.views, data.clones, data.key, section);
 
         if (!isLast) {
-          section.appendChild(document.createElement("hr")).className = "divider";
+          const hr = document.createElement("hr");
+          hr.className = "divider";
+          section.appendChild(hr);
         }
 
         return section;
       }
 
+      function ecosystemSection(title, badgeClass, repoNodes) {
+        const wrap = document.createElement("div");
+        wrap.className = "ecosystem-section";
+        wrap.innerHTML = `
+          <div class="ecosystem-heading">
+            <h2>${title}</h2>
+            <span class="eco-badge ${badgeClass}">${badgeClass === "pypi" ? "PyPI" : "npm"}</span>
+          </div>
+        `;
+        repoNodes.forEach(n => wrap.appendChild(n));
+        return wrap;
+      }
+
       async function init() {
         const main = document.getElementById("main");
         main.innerHTML = "";
-        for (let i = 0; i < repos.length; i++) {
-          const section = await renderRepo(repos[i], i === repos.length - 1);
-          main.appendChild(section);
-        }
+
+        const [pypiData, npmData] = await Promise.all([
+          Promise.all(PYPI_REPOS.map(loadPypiRepo)),
+          Promise.all(NPM_REPOS.map(loadNpmRepo)),
+        ]);
+
+        pypiData.sort((a, b) => b.score - a.score);
+        npmData.sort((a, b) => b.score - a.score);
+
+        const pypiNodes = pypiData.map((d, i) => renderRepoSection(d, "pypi", i === pypiData.length - 1));
+        const npmNodes  = npmData.map((d, i)  => renderRepoSection(d, "npm",  i === npmData.length - 1));
+
+        main.appendChild(ecosystemSection("Python Packages", "pypi", pypiNodes));
+        main.appendChild(ecosystemSection("Node.js Packages", "npm", npmNodes));
       }
 
       init();

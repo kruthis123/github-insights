@@ -24,11 +24,32 @@ jobs:
           git fetch origin insights || echo "No 'insights' branch found"
           git checkout insights || git checkout -b insights
 
-      - name: Collect Insights
+      - name: Collect GitHub repo insights
         uses: emillg/github-repo-insights@v1.2.1
         with:
           repos: "kruthis123/github-context-tools,kruthis123/node-cluster-sqs-consumer,kruthis123/git-unified-diff-parse"
           pat-token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Collect PyPI stats — github-context-tools
+        uses: ysskrishna/pypi-package-stats-action@v1
+        with:
+          package-name: github-context-tools
+          output-path: docs/data/pypi_github-context-tools.json
+
+      - name: Collect PyPI stats — git-unified-diff-parse
+        uses: ysskrishna/pypi-package-stats-action@v1
+        with:
+          package-name: git-unified-diff-parse
+          output-path: docs/data/pypi_git-unified-diff-parse.json
+
+      - name: Collect npm stats — node-cluster-sqs-consumer
+        run: |
+          mkdir -p docs/data
+          curl -sf "https://api.npmjs.org/downloads/point/last-day/node-cluster-sqs-consumer"   | jq '{last_day: .downloads}'   > /tmp/npm_day.json
+          curl -sf "https://api.npmjs.org/downloads/point/last-week/node-cluster-sqs-consumer"  | jq '{last_week: .downloads}'  > /tmp/npm_week.json
+          curl -sf "https://api.npmjs.org/downloads/point/last-month/node-cluster-sqs-consumer" | jq '{last_month: .downloads}' > /tmp/npm_month.json
+          jq -s '.[0] * .[1] * .[2]' /tmp/npm_day.json /tmp/npm_week.json /tmp/npm_month.json \
+            > docs/data/npm_node-cluster-sqs-consumer.json
 
       - name: Commit and push insights data
         run: |
@@ -39,6 +60,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Update GitHub Insights"
+            git commit -m "Update GitHub, PyPI and npm insights"
             git push origin insights
           fi
