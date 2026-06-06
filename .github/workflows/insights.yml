@@ -54,6 +54,7 @@ jobs:
       - name: Archive PyPI and npm snapshots by date
         run: |
           DATE=$(date -u +%Y%m%d)
+          sudo chmod -R 777 docs/data/raw/
           mkdir -p docs/data/raw/$DATE
           cp docs/data/pypi_github-context-tools.json   docs/data/raw/$DATE/pypi_github-context-tools.json
           cp docs/data/pypi_git-unified-diff-parse.json  docs/data/raw/$DATE/pypi_git-unified-diff-parse.json
