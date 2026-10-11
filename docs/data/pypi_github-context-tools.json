@@ -10,22 +10,22 @@
     "pypi_url": "https://pypi.org/project/github-context-tools/"
   },
   "downloads": {
-    "last_day": 1,
-    "last_week": 2,
-    "last_month": 5,
-    "last_180d": 356
+    "last_day": 0,
+    "last_week": 3,
+    "last_month": 7,
+    "last_180d": 359
   },
   "python_versions": [
     {
       "version": "Unknown",
-      "downloads": 5,
+      "downloads": 7,
       "percentage": 100.0
     }
   ],
   "operating_systems": [
     {
       "os": "Unknown",
-      "downloads": 5,
+      "downloads": 7,
       "percentage": 100.0
     }
   ]
