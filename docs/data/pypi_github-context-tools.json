@@ -11,21 +11,21 @@
   },
   "downloads": {
     "last_day": 0,
-    "last_week": 3,
+    "last_week": 2,
     "last_month": 7,
-    "last_180d": 359
+    "last_180d": 361
   },
   "python_versions": [
     {
       "version": "Unknown",
-      "downloads": 7,
+      "downloads": 8,
       "percentage": 100.0
     }
   ],
   "operating_systems": [
     {
       "os": "Unknown",
-      "downloads": 7,
+      "downloads": 8,
       "percentage": 100.0
     }
   ]
