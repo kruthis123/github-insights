@@ -10,33 +10,33 @@
     "pypi_url": "https://pypi.org/project/git-unified-diff-parse/"
   },
   "downloads": {
-    "last_day": 0,
+    "last_day": 1,
     "last_week": 4,
     "last_month": 12,
-    "last_180d": 443
+    "last_180d": 447
   },
   "python_versions": [
     {
       "version": "Unknown",
-      "downloads": 27,
-      "percentage": 96.4
+      "downloads": 25,
+      "percentage": 96.2
     },
     {
       "version": "3.12",
       "downloads": 1,
-      "percentage": 3.6
+      "percentage": 3.8
     }
   ],
   "operating_systems": [
     {
       "os": "Unknown",
-      "downloads": 27,
-      "percentage": 96.4
+      "downloads": 25,
+      "percentage": 96.2
     },
     {
       "os": "Linux",
       "downloads": 1,
-      "percentage": 3.6
+      "percentage": 3.8
     }
   ]
 }
