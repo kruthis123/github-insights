@@ -11,37 +11,37 @@
   },
   "downloads": {
     "last_day": 1,
-    "last_week": 7,
-    "last_month": 12,
-    "last_180d": 454
+    "last_week": 1,
+    "last_month": 16,
+    "last_180d": 224
   },
   "python_versions": [
     {
       "version": "Unknown",
-      "downloads": 19,
-      "percentage": 86.4
+      "downloads": 13,
+      "percentage": 81.2
     },
     {
       "version": "3.14",
       "downloads": 2,
-      "percentage": 9.1
+      "percentage": 12.5
     },
     {
       "version": "3.12",
       "downloads": 1,
-      "percentage": 4.5
+      "percentage": 6.2
     }
   ],
   "operating_systems": [
     {
       "os": "Unknown",
-      "downloads": 19,
-      "percentage": 86.4
+      "downloads": 13,
+      "percentage": 81.2
     },
     {
       "os": "Linux",
       "downloads": 3,
-      "percentage": 13.6
+      "percentage": 18.8
     }
   ]
 }
